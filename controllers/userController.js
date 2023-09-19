@@ -46,7 +46,7 @@ module.exports.loginPost = [
     }
 
     // Give user their JWT
-    await jwt.sign({ user }, process.env.secret, (err, token) => {
+    jwt.sign({ user }, process.env.secret, (err, token) => {
       if (err) {
         return res.json({
           message: 'Error generating jwt',
@@ -103,7 +103,7 @@ module.exports.signupPost = [
     }
 
     // Save user to database
-    await bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
+    bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
       if (err) {
         res.json({
           message: 'Error hashing password',
@@ -117,7 +117,12 @@ module.exports.signupPost = [
       });
 
       await user.save();
-      await jwt.sign({ user }, process.env.secret, (err, token) => {
+      jwt.sign({ user }, process.env.secret, (err, token) => {
+        if (err) {
+          return res.json({
+            message: "Couldn't generate token",
+          });
+        }
         return res.json({
           message: 'Created user sucessfully.',
           token,
