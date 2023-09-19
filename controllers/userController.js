@@ -117,7 +117,7 @@ module.exports.signupPost = [
       });
 
       await user.save();
-      jwt.sign({ user }, process.env.secret, (err, token) => {
+      jwt.sign({ user }, process.env.secret, async (err, token) => {
         if (err) {
           return res.json({
             message: "Couldn't generate token",
