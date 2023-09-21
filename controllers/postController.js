@@ -1,5 +1,5 @@
 const asyncHandler = require('express-async-handler');
-const { body, validationResult } = require('express-validator');
+const { param, body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const { getToken } = require('./verification');
 
@@ -47,16 +47,26 @@ module.exports.createPost = [
   }),
 ];
 
-module.exports.getPost = asyncHandler(async (req, res, next) => {
-  const post = await Post.findById(req.params.postid).populate(
-    'author',
-    'username first_name last_name _id'
-  );
+module.exports.getPost = [
+  param('postid').isMongoId().withMessage('Invalid post id'),
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
 
-  return res.json({
-    post,
-  });
-});
+    if (!errors.isEmpty()) {
+      res.json({
+        errors: errors,
+      });
+    }
+    const post = await Post.findById(req.params.postid).populate(
+      'author',
+      'username first_name last_name _id'
+    );
+
+    return res.json({
+      post,
+    });
+  }),
+];
 
 module.exports.getAllPosts = asyncHandler(async (req, res, next) => {
   const posts = await Post.find().populate(
@@ -74,6 +84,7 @@ module.exports.updatePost = [
   body('title').trim().isLength({ min: 1 }).withMessage('title is required'),
   body('text').trim().isLength({ min: 1 }).withMessage('text is required'),
   body('published').isBoolean().withMessage('expecting boolean for published'),
+  param('postid').isMongoId().withMessage('Invalid post id'),
   asyncHandler(async (req, res, next) => {
     const post = await Post.findById(req.params.postid);
 
