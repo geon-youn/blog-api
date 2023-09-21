@@ -7,6 +7,7 @@ const commentSchema = new Schema({
   post: { required: true, type: Schema.Types.ObjectId, ref: 'Post' },
   replyTo: { type: Schema.Types.ObjectId, ref: 'Comment' },
   created: { required: true, type: Date },
+  modified: { type: Date },
   deleted: { required: true, type: Boolean },
 });
 
