@@ -54,7 +54,7 @@ module.exports.getPost = [
 
     if (!errors.isEmpty()) {
       res.json({
-        errors: errors,
+        errors: errors.array(),
       });
     }
     const post = await Post.findById(req.params.postid).populate(
