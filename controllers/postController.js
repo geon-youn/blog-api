@@ -48,7 +48,7 @@ module.exports.createPost = [
 ];
 
 module.exports.getPost = asyncHandler(async (req, res, next) => {
-  const post = await Post.findById(req.params.id).populate(
+  const post = await Post.findById(req.params.postid).populate(
     'author',
     'username first_name last_name _id'
   );
@@ -75,7 +75,7 @@ module.exports.updatePost = [
   body('text').trim().isLength({ min: 1 }).withMessage('text is required'),
   body('published').isBoolean().withMessage('expecting boolean for published'),
   asyncHandler(async (req, res, next) => {
-    const post = await Post.findById(req.params.id);
+    const post = await Post.findById(req.params.postid);
 
     if (!post) {
       return res.status(401).json({
@@ -114,10 +114,10 @@ module.exports.updatePost = [
         text: req.body.text,
         modified: new Date(),
         published: req.body.published,
-        _id: req.params.id,
+        _id: req.params.postid,
       });
 
-      await Post.findByIdAndUpdate(req.params.id, newPost, {});
+      await Post.findByIdAndUpdate(req.params.postid, newPost, {});
       return res.json({
         message: 'Updated post',
         post: newPost,
@@ -129,7 +129,7 @@ module.exports.updatePost = [
 module.exports.deletePost = [
   getToken,
   asyncHandler(async (req, res, next) => {
-    const post = await Post.findById(req.params.id);
+    const post = await Post.findById(req.params.postid);
 
     if (!post) {
       return res.json({
@@ -151,7 +151,7 @@ module.exports.deletePost = [
         return res.sendStatus(403);
       }
 
-      await Post.findByIdAndDelete(req.params.id);
+      await Post.findByIdAndDelete(req.params.postid);
       return res.json({
         message: 'Successfully removed post',
         post,
