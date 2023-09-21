@@ -58,6 +58,17 @@ module.exports.getPost = asyncHandler(async (req, res, next) => {
   });
 });
 
+module.exports.getAllPosts = asyncHandler(async (req, res, next) => {
+  const posts = await Post.find().populate(
+    'author',
+    'username first_name last_name _id'
+  );
+
+  return res.json({
+    posts,
+  });
+});
+
 module.exports.updatePost = [
   getToken,
   body('title').trim().isLength({ min: 1 }).withMessage('title is required'),
