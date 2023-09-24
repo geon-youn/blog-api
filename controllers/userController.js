@@ -7,6 +7,7 @@ const User = require('../models/user');
 require('dotenv').config();
 
 module.exports.loginPost = [
+  // Validate input
   body('username')
     .trim()
     .escape()
@@ -16,9 +17,8 @@ module.exports.loginPost = [
     .withMessage('username should be alphanumeric'),
   body('password').isLength({ min: 0 }).withMessage('password is required'),
   asyncHandler(async (req, res, next) => {
+    // Check for input errors
     const errors = validationResult(req);
-
-    // Send error message if input is invalid
     if (!errors.isEmpty()) {
       return res.json({
         message: 'Invalid input',
@@ -26,15 +26,15 @@ module.exports.loginPost = [
       });
     }
 
-    // Check if user exists
+    // Check if a user with given username exists
     const user = await User.findOne({ username: req.body.username });
     if (!user) {
       return res.json({
-        message: 'User with username does not exist',
+        message: 'Incorrent username',
       });
     }
 
-    // Check password
+    // Verify password
     const password_matches = await bcrypt.compare(
       req.body.password,
       user.password
@@ -45,7 +45,7 @@ module.exports.loginPost = [
       });
     }
 
-    // Give user their JWT
+    // Return jwt
     jwt.sign({ user }, process.env.secret, (err, token) => {
       if (err) {
         return res.json({
@@ -60,9 +60,8 @@ module.exports.loginPost = [
   }),
 ];
 
-// User signs up
 module.exports.signupPost = [
-  // Validate and sanitize input
+  // Validate input
   body('username')
     .trim()
     .escape()
@@ -84,9 +83,8 @@ module.exports.signupPost = [
     .isAlpha()
     .withMessage('last name should be alphabetic'),
   asyncHandler(async (req, res, next) => {
+    // Check for input errors
     const errors = validationResult(req);
-
-    // Send error message if input is invalid
     if (!errors.isEmpty()) {
       return res.json({
         message: 'Invalid input',
@@ -94,11 +92,11 @@ module.exports.signupPost = [
       });
     }
 
-    // Check if username exists
+    // Check if user with given username exists
     const userExists = await User.findOne({ username: req.body.username });
     if (userExists) {
       return res.json({
-        message: 'User with username already exists',
+        message: 'Username taken',
       });
     }
 
@@ -109,14 +107,17 @@ module.exports.signupPost = [
           message: 'Error hashing password',
         });
       }
+
+      // Create and save user
       const user = new User({
         username: req.body.username,
         password: hashedPassword,
         first_name: req.body.first_name,
         last_name: req.body.last_name,
       });
-
       await user.save();
+
+      // Generate jwt for user
       jwt.sign({ user }, process.env.secret, async (err, token) => {
         if (err) {
           return res.json({

@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const asyncHandler = require('express-async-handler');
 
+// Get jwt token from authorization header and store it in req.token
 module.exports.getToken = asyncHandler(async (req, res, next) => {
   const bearerHeader = req.headers['authorization'];
   if (typeof bearerHeader !== undefined) {
