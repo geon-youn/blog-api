@@ -76,7 +76,7 @@ module.exports.getPost = [
     );
 
     // Check if post exists
-    if (!post) {
+    if (!post || !post.published) {
       return res.json({
         message: 'Post with given postid does not exist',
       });
