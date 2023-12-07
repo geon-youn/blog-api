@@ -15,7 +15,7 @@ module.exports.loginPost = [
     .withMessage('username is required')
     .isAlphanumeric()
     .withMessage('username should be alphanumeric'),
-  body('password').isLength({ min: 0 }).withMessage('password is required'),
+  body('password').isLength({ min: 1 }).withMessage('password is required'),
   asyncHandler(async (req, res, next) => {
     // Check for input errors
     const errors = validationResult(req);
