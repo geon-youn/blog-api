@@ -18,6 +18,8 @@ Requires 2 environment variables:
 
 ### Database Models
 
+For create, update, and delete operations, bearer authentication is used (the request must have an `authorization` header of the form `Bearer <jwt>`).
+
 #### User
 
 Holds users' information.
@@ -93,15 +95,37 @@ On success, returns a json response with the user's JWT token in `token`.
 
 #### Creating a blog post
 
-Perform a `post` request to `/post/create` 
+Perform a `post` request to `/api/post/create` with `req.body` containing the following:
+- `title`: the post's title.
+- `text`: the post's text.
+- `published`: the post's published status. 
+
+Returns a json response with the new blog post in `post` upon success, otherwise an error message in `message` and `errors`.
 
 #### Getting a specific blog post (e.g. to display a specific post)
 
+Perform a `get` request to `/api/post/get/:postid` where `postid` is a valid MongoDB id. 
+
+Returns a json response with the blog post with `postid` in `post` if successful, otherwise errors in `message` and `errors`. 
+
 #### Getting all blog posts (e.g. for the main page)
+
+Perform a `get` request to `/api/post/get` to get a json response with all published blog posts in `posts`.
 
 #### Updating a specific blog post
 
+Perform a `put` request to `/api/post/update/:postid` where `postid` is a valid MongoDB id with the request body having:
+- `title`: the post's (modified) title.
+- `text`: the post's (modified) text.
+- `published`: the post's (modified) published status.
+
+Returns a json response with the modified blog post with `postid` in `post` if successful, otherwise errors in `message` and `errors`. 
+
 #### Deleting a specific blog post
+
+Perform a `delete` request to `/api/post/delete/:postid` where `postid` is a valid MongoDB id. 
+
+Returns a json response with the deleted blog post in `post` if successful, otherwise errors in `message` and `errors`.
 
 ### Comment API
 
