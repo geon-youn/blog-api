@@ -90,8 +90,8 @@ module.exports.getPost = [
 ];
 
 module.exports.getAllPosts = asyncHandler(async (req, res, next) => {
-  // Find and return all posts
-  const posts = await Post.find().populate(
+  // Find and return all published posts
+  const posts = await Post.find({ published: true }).populate(
     'author',
     'username first_name last_name _id'
   );
