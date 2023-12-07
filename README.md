@@ -95,18 +95,22 @@ On success, returns a json response with the user's JWT token in `token`.
 
 #### Creating a blog post
 
-Perform a `post` request to `/api/post/create` with `req.body` containing the following:
+Perform a `post` request to `/api/post/create` where `req.body` has:
 - `title`: the post's title.
 - `text`: the post's text.
 - `published`: the post's published status. 
 
-Returns a json response with the new blog post in `post` upon success, otherwise an error message in `message` and `errors`.
+Returns a json response with the new blog post in `post` upon success, otherwise an error message in `message` and `errors`. Errors occur when:
+- Inputs are invalid.
+- JWT is invalid (i.e. user doesn't exist or isn't logged in).
 
 #### Getting a specific blog post (e.g. to display a specific post)
 
-Perform a `get` request to `/api/post/get/:postid` where `postid` is a valid MongoDB id. 
+Perform a `get` request to `/api/post/get/:postid` where `postid` is the id of the post you want. 
 
-Returns a json response with the blog post with `postid` in `post` if successful, otherwise errors in `message` and `errors`. 
+Returns a json response with the blog post with `postid` in `post` if successful, otherwise errors in `message` and `errors`. Errors occur when:
+- `postid` is an invalid MongoDB id. 
+- Post with `postid` doesn't exist or isn't published.
 
 #### Getting all blog posts (e.g. for the main page)
 
@@ -114,18 +118,29 @@ Perform a `get` request to `/api/post/get` to get a json response with all publi
 
 #### Updating a specific blog post
 
-Perform a `put` request to `/api/post/update/:postid` where `postid` is a valid MongoDB id with the request body having:
+Perform a `put` request to `/api/post/update/:postid` where `postid` is the id of the post you're updating and `req.body` has:
 - `title`: the post's (modified) title.
 - `text`: the post's (modified) text.
 - `published`: the post's (modified) published status.
 
-Returns a json response with the modified blog post with `postid` in `post` if successful, otherwise errors in `message` and `errors`. 
+Returns a json response with the modified blog post with `postid` in `post` if successful, otherwise errors in `message` and `errors`. Errors occur when:
+- Inputs are invalid.
+- `postid` isn't a valid MongoDB id.
+- Post with `postid` doesn't exist.
+- JWT is invalid (i.e. user doesn't exist or isn't logged in).
+- Requesting user isn't the author of the post. 
 
 #### Deleting a specific blog post
 
-Perform a `delete` request to `/api/post/delete/:postid` where `postid` is a valid MongoDB id. 
+Perform a `delete` request to `/api/post/delete/:postid` where `postid` is the id of the post to delete.
 
-Returns a json response with the deleted blog post in `post` if successful, otherwise errors in `message` and `errors`.
+Returns a json response with the deleted blog post in `post` if successful, otherwise errors in `message` and `errors`. Errors occur when:
+- `postid` isn't a valid MongoDB id.
+- Post with `postid` doesn't exist.
+- JWT is invalid (i.e. user doesn't exist or isn't logged in).
+- Requesting user isn't the author of the post.
+
+This request, if successful, also deletes all comments for `postid`.
 
 ### Comment API
 
