@@ -64,7 +64,7 @@ module.exports.getPost = [
     // Check for input errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.json({
+      return res.json({
         errors: errors.array(),
       });
     }
@@ -74,6 +74,13 @@ module.exports.getPost = [
       'author',
       'username first_name last_name _id'
     );
+
+    // Check if post exists
+    if (!post) {
+      return res.json({
+        message: 'Post with given postid does not exist',
+      });
+    }
 
     // Return post
     return res.json({
