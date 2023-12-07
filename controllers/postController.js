@@ -50,6 +50,7 @@ module.exports.createPost = [
 
       return res.json({
         message: 'Created post',
+        post,
       });
     });
   }),
