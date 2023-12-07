@@ -8,6 +8,12 @@ A RESTful API for a blog with the following features:
 5. CRUD methods for posts and comments.
 6. Support for MongoDB Atlas.
 
+## Running The API
+
+1. Set up the `.env` file (which involves also setting up a MongoDB Atlas database). 
+2. Run `npm install` to install dependencies.
+3. Run `node app.js` to start the server (by default, listens on `localhost:3000`). 
+
 ## Documentation
 
 ### `.env` file
