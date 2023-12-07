@@ -10,7 +10,7 @@ A RESTful API for a blog with the following features:
 
 ## Documentation
 
-### `.env` 
+### `.env` file
 
 Requires 2 environment variables:
 - `mongodb` is the link for connecting to the MongoDB Atlas database.
@@ -57,7 +57,7 @@ The user routes allow for signing up (creating an account) and logging in (retri
 
 #### Signing Up
 
-Perform a `post` request to `/api/user/signup` with the request body containing the following:
+Perform a `post` request to `/api/user/signup` where `req.body` has:
 - `username`: the user's desired username.
   - Has to be alphanumeric.
   - Non-empty. 
@@ -79,7 +79,7 @@ On success, returns a json response with the user's JWT token in `token`.
 
 #### Logging In
 
-Perform a `post` request to `/api/user/login` with the request body containing the following:
+Perform a `post` request to `/api/user/login` where `req.body` has:
 - `username`: the user's username.
 - `password`: the user's password.
 
@@ -129,3 +129,52 @@ Returns a json response with the deleted blog post in `post` if successful, othe
 
 ### Comment API
 
+#### Creating a comment to a blog post
+
+Perform a `post` request to `/api/comment/create/:postid` where `postid` is the id of the post on which is being commented and `req.body` has:
+- `text`: the comment's text.
+
+Returns a json response with the new comment in `comment` if successful, otherwise errors in `message` and `errors`. Errors occur when:
+- `postid` is an invalid MongoDB id.
+- Post with `postid` doesn't exist. 
+- JWT is invalid (i.e. user doesn't exist or isn't logged in). 
+
+#### Replying to a comment
+
+Perform a `post` request to `/api/comment/create/:postid/:parentid` where `postid` is the id of the post, `parentid` is the id of the comment you're replying to, and `req.body` has:
+- `text`: the comment's text.
+
+Returns a json response with the new comment in `comment` if successful, otherwise errors in `message` and `errors`. Errors occur when:
+- `postid` is an invalid MongoDB id.
+- Post with `postid` doesn't exist. 
+- JWT is invalid (i.e. user doesn't exist or isn't logged in). 
+- Parent comment with `parentid` doesn't exist.
+- Parent comment with `parentid` is for a post with a different `postid`.
+
+#### Getting all comments for a blog post
+
+Perform a `get` request to `/api/comment/get/:postid` where `postid` is the id of the post for which you want to get comments.
+
+Returns a json response with all comments for the post with `postid` in `comments` if successful, where deleted comments' `text` and `author` are `undefined`; otherwise, returns errors in `message` and `errors`. Errors occur when:
+- `postid` is an invalid MongoDB id. 
+
+#### Updating a comment
+
+Perform a `put` request to `/api/comment/update/:commentid` where `commentid` is the id of the comment to update and `req.body` has:
+- `text`: the comment's (modified) text.
+
+Returns a json response with the modified comment in `comment` if successful, otherwise errors in `message` and `errors`. Errors occur when:
+- `commentid` is an invalid MongoDB id.
+- Comment with `commentid` doesn't exist or is deleted. 
+- JWT is invalid (i.e. user doesn't exist or isn't logged in). 
+- Requesting user isn't the author of the comment.
+
+#### Pseudo-deleting a comment
+
+Perform a `delete` request to `/api/comment/delete/:commentid` where `commentid` is the id of the comment to delete.
+
+Returns a json response with the deleted comment in `comment` if successful, otherwise errors in `message` and `errors`. Errors occur when:
+- `commentid` is an invalid MongoDB id.
+- Comment with `commentid` doesn't exist or is already deleted.
+- JWT is invalid (i.e. user doesn't exist or isn't logged in).
+- Requesting user isn't the author of the comment.
